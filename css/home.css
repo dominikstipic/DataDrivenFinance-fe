@@ -1,0 +1,22 @@
+#div-tickers {
+    background-color: rgb(197, 201, 202);
+    border-style: solid;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+
+}
+
+.div-ticker {
+    background-color: lightblue;
+    border-style: solid;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+
+    width: -moz-min-content;
+	width: -webkit-min-content;
+	width: min-content;
+}
