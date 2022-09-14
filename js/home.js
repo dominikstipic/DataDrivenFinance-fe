@@ -28,6 +28,10 @@ class StockChart{
     };
   }
 
+  remove_all(){
+    this.put_data([]);
+  }
+
   get_length(){
     if(this.get_data().length == 0){
       return 0;
@@ -85,9 +89,14 @@ class StockChart{
   }
 }
 
-function send_req(ticker, start, end, callback){
-  const SERVER = "http://localhost:8080/api/data";
-  let host_url = SERVER + "/" + ticker;
+function send_req(ticker, start, end, attribute, returns, callback){
+  let host_url = [];
+  if(returns){
+    host_url = `http://localhost:8080/api/stats/${ticker}/${attribute}/returns`;
+  }
+  else{
+    host_url = `http://localhost:8080/api/data/${ticker}/${attribute}`;
+  }
   var url = new URL(host_url);
   url.searchParams.append("start", start);
   url.searchParams.append("end", end);
@@ -97,19 +106,49 @@ function send_req(ticker, start, end, callback){
           throw new Error("HTTP error: " + response.status);
       return response.json();
     })
-    .then(json => {
-      var data = json.timeseries.close;
+    .then(data => {
       callback(data);
     });
 }
 
-function search_handler(){
-  let ticker = document.querySelector("#search-text").value;
-  let queryParams = new URLSearchParams(window.location.search);
-  let start = queryParams.get("start");
-  let end = queryParams.get("end");
-  return [ticker, start, end];
+function get_attributes(){
+  let opt1 = document.querySelector("#option1");
+  let opt2 = document.querySelector("#option2");
+  let opt3 = document.querySelector("#option3");
+  let opts = [opt1, opt2, opt3];
+  let value = [];
+  opts.forEach(element => {
+      if(element.checked){
+        value = element.value;
+      }
+  });
+  return value;
+}
 
+function handler(components){
+  if(components.text_bar.value === ""){
+    return;
+  }
+  let ticker = components.text_bar.value;
+  let [start, end] = [components.start_date_picker.value, components.end_date_picker.value];
+  let attribute = get_attributes();
+  let returns = components.returns_switch.checked;
+  send_req(ticker, start, end, attribute, returns, data => {
+    chart.add([data]);
+    chart.render();
+  });
+  components.text_bar.value = "";
+  add_ticker(ticker);
+}
+
+
+///////////////// TICKER COMPONENT /////////////////////////////
+
+function get_tickers(){
+  let tickers_div = document.querySelector("#div-tickers");
+  return Array.from(tickers_div.children).map(e => {
+    return e.textContent;
+  });
 }
 
 function add_ticker(ticker){
@@ -123,34 +162,60 @@ function add_ticker(ticker){
   tickers_div.appendChild(new_div);
 }
 
-//////////////////////////////////////////////
+function remove_all_tickers(){
+  let tickers_div = document.querySelector("#div-tickers");
+  while (tickers_div.lastChild) {
+    tickers_div.removeChild(tickers_div.lastChild);
+  }
+}
 
+
+///////////////// INIT /////////////////////////////
+
+let components = {
+  search_bar: document.querySelector("#search-btn"),
+  text_bar: document.querySelector("#search-text"),
+  start_date_picker: document.querySelector("#start"),
+  end_date_picker: document.querySelector("#end"), 
+  returns_switch: document.querySelector("#returns-switch"), 
+  remove_btn: document.querySelector("#remove-btn"), 
+  stats_btn: document.querySelector("#stats-btn")
+}
+
+const present_date = new Date();
+const past_date = new Date();
+past_date.setFullYear(present_date.getFullYear() - 1);
+components.end_date_picker.value = present_date.toISOString().split('T')[0].slice(0, 10);
+components.start_date_picker.value = past_date.toISOString().split('T')[0].slice(0, 10);
 
 let tickers = ["SPY"];
-let start = "2021-01-01";
-let end = "2022-01-1";
 let chart = new StockChart();
-send_req(tickers[0], start, end, data => {
-  chart.add([data]);
-  chart.render();
+send_req(tickers[0], 
+  components.start_date_picker.value, 
+  components.end_date_picker.value, 
+  get_attributes(), 
+  components.returns_switch.checked,
+  data => {
+    chart.add([data]);
+    chart.render();
 })
 add_ticker(tickers[0]);
 
+///////////////// LISTENERS /////////////////////////////
 
-
-
-let search_bar = document.querySelector("#search-btn");
-let text_bar = document.querySelector("#search-text");
-search_bar.onclick = search_handler;
-text_bar.onkeypress = event => {
-  if (event.key === "Enter") {
-    let [ticker, start, end] = search_handler();
-    send_req(ticker, start, end, data => {
-      chart.add([data]);
-      chart.render();
-    })
-
-    text_bar.value = "";
-    add_ticker(ticker);
+components.search_bar.onclick = () => handler(components);
+components.text_bar.onkeypress = event => {
+  if (event.key === "Enter"){
+    handler(components);
   }
 };  
+components.remove_btn.onclick = () => {
+  chart.remove_all();
+  chart.render();
+  remove_all_tickers();
+}
+
+components.stats_btn.onclick = () => {
+  let tickers = get_tickers();
+  alert(tickers);
+}
