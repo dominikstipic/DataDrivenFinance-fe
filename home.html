@@ -13,6 +13,24 @@
     <label for="end"><b>End Date</b></label>
     <input type="date" class="form-control" name="end" id="end" required>
 
+    <label for="attribute-container"><b>Attribute</b></label>
+    <br>
+    <div class="float-left" id="attribute-container">
+        <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked value="close">
+        <label class="btn btn-primary" for="option1">Close</label>
+
+        <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" value="adj_close" checked>
+        <label class="btn btn-primary" for="option2">Adjusted Close Price</label>
+
+        <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" value="volume">
+        <label class="btn btn-primary" for="option3">Volume</label>
+    </div>
+    
+    <div class="form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" id="returns-switch">
+        <label class="form-check-label" for="returns-switch"><b>Returns</b></label>
+    </div>
+
     <label for="search-text"><b>Ticker</b></label>
     <input id="search-text" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" required>
     <button id="search-btn" type="button" class="btn btn-outline-primary">search</button>
@@ -22,23 +40,7 @@
     <div id="div-tickers" class="row row-cols-4">
     </div>
 </div>
-<div class="container text-center" id="attribute-container">
-    <input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked value="close">
-    <label class="btn btn-primary" for="option1">Close</label>
 
-    <input type="radio" class="btn-check" name="options" id="option2" autocomplete="off" value="adj_close">
-    <label class="btn btn-primary" for="option2">Adjusted Close Price</label>
-
-    <input type="radio" class="btn-check" name="options" id="option3" autocomplete="off" value="volume">
-    <label class="btn btn-primary" for="option3">Volume</label>
-    <br>
-    <br>
-    <div class="form-switch">
-        <input class="form-check-input" type="checkbox" role="switch" id="returns-switch">
-        <label class="form-check-label" for="returns-switch">Returns</label>
-    </div>
-</div>
-<br>
 <div class="text-center">
     <button type="button" class="btn btn-primary" id="remove-btn">Remove All</button>
 </div>
@@ -50,8 +52,12 @@
 <br> <br>
 
 <div>
-    <button type="button" class="btn btn-primary" id="stats-btn">Statistics</button>
+    <h4>Statistics</h4>
+    <ul class="list-group" id="corr-group">
+    </ul>
 </div>
+
+
 
 
 <script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
