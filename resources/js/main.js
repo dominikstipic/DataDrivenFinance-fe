@@ -185,4 +185,3 @@ components.remove_btn.onclick = () => {
   remove_all_stats();
 }
 
-//components.stats_btn.onclick = () => stats_handler(components);
