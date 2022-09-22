@@ -185,7 +185,13 @@ function stats_handler(components){
   let tickers = get_tickers();
   let [start, end] = [components.start_date_picker.value, components.end_date_picker.value];
   let attribute = get_attributes();
-  let host_url = `http://localhost:8080/api/stats/${attribute}/corr`;
+  let host_url = [];
+  if(components.returns_switch.checked){
+    host_url = `http://localhost:8080/api/stats/${attribute}/corr`;
+  }
+  else{
+    host_url = `http://localhost:8080/api/stats/${attribute}/returns/corr`;
+  }
   var url = new URL(host_url);
   url.searchParams.append("start", start);
   url.searchParams.append("end", end);
@@ -268,4 +274,4 @@ components.remove_btn.onclick = () => {
   remove_all_stats();
 }
 
-components.stats_btn.onclick = () => stats_handler(components);
+//components.stats_btn.onclick = () => stats_handler(components);
