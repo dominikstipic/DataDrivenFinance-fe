@@ -46,14 +46,26 @@ function get_tickers(){
 }
 
 function add_ticker(ticker){
-  let new_div = document.createElement('div');
-  new_div.className = "div-ticker";
-  new_div.innerText = ticker;
-  new_div.id = ticker;
+  let row = document.createElement('div');
+  row.className = "row ticker-row";
+  row.id = ticker;
 
+  let li = document.createElement('li');
+  li.className = "col-sm-9 list-group-item ticker-li";
+  li.innerText = ticker;
+  row.appendChild(li);
+
+  let input = document.createElement('input');
+  input.className = "col-sm form-control ticker-input";
+  input.type = "number";
+  input.step = "0.01";
+  input.min = 0;
+  input.max = 1;
+  row.appendChild(input);
+
+  document.querySelector("#div-tickers").appendChild(row);
   tickers.push(ticker);
-  let tickers_div = document.querySelector("#div-tickers");
-  tickers_div.appendChild(new_div);
+
 }
 
 function remove_all_tickers(){
