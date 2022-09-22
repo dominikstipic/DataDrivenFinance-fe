@@ -33,3 +33,17 @@
 #input > * {
     margin-top: 5px;
 }
+
+
+.ticker-row {
+    margin: 10px;
+}
+
+.ticker-li {
+    border-style: solid;
+    background-color:  rgb(203, 241, 250);
+}
+
+.ticker-input {
+    border-style: solid;
+}
