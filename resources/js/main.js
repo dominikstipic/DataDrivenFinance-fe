@@ -56,7 +56,8 @@ function search_handler(components){
     chart.render();
   });
   components.text_bar.value = "";
-  add_ticker(ticker);
+  const color = chart.get_color(chart.size);
+  add_ticker(ticker, color);
   stats_handler(components);
 }
 
@@ -136,7 +137,8 @@ send_req(tickers[0],
     chart.add([data]);
     chart.render();
 })
-add_ticker(tickers[0]);
+const color = chart.get_color(0);
+add_ticker(tickers[0], color);
 
 ///////////////// LISTENERS /////////////////////////////
 

@@ -7,7 +7,7 @@ function get_tickers(){
     });
 }
   
-function add_ticker(ticker){
+function add_ticker(ticker, color){
     let row = document.createElement('div');
     row.className = "row ticker-row";
     row.id = ticker;
@@ -15,6 +15,7 @@ function add_ticker(ticker){
     let li = document.createElement('li');
     li.className = "col-sm-9 list-group-item ticker-li";
     li.innerText = ticker;
+    li.style.backgroundColor = color;
     row.appendChild(li);
   
     let input = document.createElement('input');
