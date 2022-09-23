@@ -1,9 +1,11 @@
 import {StockChart} from "./chart.js";
+import {get_tickers, add_ticker, remove_tickers, tickers} from "./ticker-component.js"
+import {remove_stats} from "./stat-component.js" ;
 
 function send_req(ticker, start, end, attribute, returns, callback){
   let host_url = [];
   if(returns){
-    host_url = `http://localhost:8080/api/stats/${ticker}/${attribute}/returns`;
+    host_url = `http://localhost:8080/api/stats/${ticker}/${attribute}/returns/cumulative`;
   }
   else{
     host_url = `http://localhost:8080/api/data/${ticker}/${attribute}`;
@@ -22,6 +24,9 @@ function send_req(ticker, start, end, attribute, returns, callback){
     });
 }
 
+///////////////// ATTRIBUTE COMPONENT /////////////////////////////
+
+
 function get_attributes(){
   let opt1 = document.querySelector("#option1");
   let opt2 = document.querySelector("#option2");
@@ -36,57 +41,9 @@ function get_attributes(){
   return value;
 }
 
-///////////////// TICKER COMPONENT /////////////////////////////
-
-function get_tickers(){
-  let tickers_div = document.querySelector("#div-tickers");
-  return Array.from(tickers_div.children).map(e => {
-    return e.textContent;
-  });
-}
-
-function add_ticker(ticker){
-  let row = document.createElement('div');
-  row.className = "row ticker-row";
-  row.id = ticker;
-
-  let li = document.createElement('li');
-  li.className = "col-sm-9 list-group-item ticker-li";
-  li.innerText = ticker;
-  row.appendChild(li);
-
-  let input = document.createElement('input');
-  input.className = "col-sm form-control ticker-input";
-  input.type = "number";
-  input.step = "0.01";
-  input.min = 0;
-  input.max = 1;
-  row.appendChild(input);
-
-  document.querySelector("#div-tickers").appendChild(row);
-  tickers.push(ticker);
-
-}
-
-function remove_all_tickers(){
-  let tickers_div = document.querySelector("#div-tickers");
-  while (tickers_div.lastChild) {
-    tickers_div.removeChild(tickers_div.lastChild);
-  }
-  
-}
-
-function remove_all_stats(){
-  let corr_div = document.querySelector("#corr-group");
-  while (corr_div.lastChild) {
-    corr_div.removeChild(corr_div.lastChild);
-  }
-}
-
-
 ///////////////// HANDLERS /////////////////////////////
 
-function handler(components){
+function search_handler(components){
   if(components.text_bar.value === ""){
     return;
   }
@@ -104,7 +61,7 @@ function handler(components){
 }
 
 function stats_handler(components){
-  remove_all_stats();
+  remove_stats();
   let tickers = get_tickers();
   let [start, end] = [components.start_date_picker.value, components.end_date_picker.value];
   let attribute = get_attributes();
@@ -169,7 +126,6 @@ past_date.setFullYear(present_date.getFullYear() - 1);
 components.end_date_picker.value = present_date.toISOString().split('T')[0].slice(0, 10);
 components.start_date_picker.value = past_date.toISOString().split('T')[0].slice(0, 10);
 
-let tickers = ["SPY"];
 let chart = new StockChart();
 send_req(tickers[0], 
   components.start_date_picker.value, 
@@ -184,17 +140,15 @@ add_ticker(tickers[0]);
 
 ///////////////// LISTENERS /////////////////////////////
 
-components.search_bar.onclick = () => handler(components);
+components.search_bar.onclick = () => search_handler(components);
 components.text_bar.onkeypress = event => {
   if (event.key === "Enter"){
-    handler(components);
+    search_handler(components);
   }
 };  
 components.remove_btn.onclick = () => {
   chart.remove_all();
   chart.render();
-  remove_all_tickers();
-  remove_all_stats();
+  remove_tickers();
+  remove_stats();
 }
-
-//components.stats_btn.onclick = () => stats_handler(components);
